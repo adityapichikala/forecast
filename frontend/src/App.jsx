@@ -428,6 +428,11 @@ function DashboardLayout() {
         // Fetch model metrics
         const metricsResponse = await fetchMetrics();
 
+        // Fetch monitoring data for model accuracy
+        const monitoringResponse = reportResponse.model_health || {};
+        const modelMape = monitoringResponse.mape || 8.5;
+        const modelAccuracy = Math.max(0, Math.min(100, 100 - modelMape)); // Convert MAPE to accuracy
+
         // Generate days array
         const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -456,10 +461,10 @@ function DashboardLayout() {
             subtitle: "Real Storage Forecast",
           },
           {
-            title: "Server Uptime",
-            value: `${(99.5 + Math.random() * 0.4).toFixed(2)}%`,
-            delta: `+${Math.round(Math.random() * 3)}`,
-            subtitle: "Last 24 hours",
+            title: "Model Accuracy",
+            value: `${modelAccuracy.toFixed(1)}%`,
+            delta: modelMape < 10 ? "+High" : "Normal",
+            subtitle: `MAPE: ${modelMape.toFixed(1)}%`,
           },
         ]);
 
